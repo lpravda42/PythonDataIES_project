@@ -1,0 +1,15 @@
+artifact_uri: file:///d:/OneDrive%20-%20FSV/IES%20bc/Data%20Proccesing%20in%20Python/Project/PythonDataIES_project/mlruns/0/d27b9a97690949838adda93bbb93f65d/artifacts
+end_time: 1683743245366
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: d27b9a97690949838adda93bbb93f65d
+run_name: resilient-goose-556
+run_uuid: d27b9a97690949838adda93bbb93f65d
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1683743237488
+status: 3
+tags: []
+user_id: svobo

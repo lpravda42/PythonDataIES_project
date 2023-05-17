@@ -1,0 +1,15 @@
+artifact_uri: file:///d:/OneDrive%20-%20FSV/IES%20bc/Data%20Proccesing%20in%20Python/Project/PythonDataIES_project/mlruns/0/2d939f92343e422984c3b9dcc3534a61/artifacts
+end_time: 1683743189912
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 2d939f92343e422984c3b9dcc3534a61
+run_name: burly-owl-76
+run_uuid: 2d939f92343e422984c3b9dcc3534a61
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1683743183173
+status: 3
+tags: []
+user_id: svobo

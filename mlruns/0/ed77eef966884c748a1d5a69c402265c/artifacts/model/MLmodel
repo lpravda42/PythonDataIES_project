@@ -1,0 +1,29 @@
+artifact_path: model
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.11.2
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.2.2
+mlflow_version: 2.3.1
+model_uuid: 9cd58eb9325f4631bf0141cac76dc23a
+run_id: ed77eef966884c748a1d5a69c402265c
+signature:
+  inputs: '[{"name": "ApplicantIncome", "type": "long"}, {"name": "CoapplicantIncome",
+    "type": "double"}, {"name": "LoanAmount", "type": "double"}, {"name": "Loan_Amount_Term",
+    "type": "double"}, {"name": "Credit_History", "type": "double"}, {"name": "Gender_Male",
+    "type": "integer"}, {"name": "Married_Yes", "type": "integer"}, {"name": "Dependents_1",
+    "type": "integer"}, {"name": "Dependents_2", "type": "integer"}, {"name": "Dependents_3+",
+    "type": "integer"}, {"name": "Education_Not Graduate", "type": "integer"}, {"name":
+    "Self_Employed_Yes", "type": "integer"}, {"name": "Property_Area_Semiurban", "type":
+    "integer"}, {"name": "Property_Area_Urban", "type": "integer"}]'
+  outputs: '[{"type": "tensor", "tensor-spec": {"dtype": "uint8", "shape": [-1]}}]'
+utc_time_created: '2023-05-15 15:03:09.161479'

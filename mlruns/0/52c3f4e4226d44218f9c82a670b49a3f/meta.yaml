@@ -1,0 +1,15 @@
+artifact_uri: file:///d:/OneDrive%20-%20FSV/IES%20bc/Data%20Proccesing%20in%20Python/Project/PythonDataIES_project/mlruns/0/52c3f4e4226d44218f9c82a670b49a3f/artifacts
+end_time: 1683743230437
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 52c3f4e4226d44218f9c82a670b49a3f
+run_name: resilient-lynx-455
+run_uuid: 52c3f4e4226d44218f9c82a670b49a3f
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1683743223669
+status: 3
+tags: []
+user_id: svobo

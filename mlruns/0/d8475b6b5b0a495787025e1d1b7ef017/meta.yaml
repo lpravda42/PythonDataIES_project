@@ -1,0 +1,15 @@
+artifact_uri: file:///d:/OneDrive%20-%20FSV/IES%20bc/Data%20Proccesing%20in%20Python/Project/PythonDataIES_project/mlruns/0/d8475b6b5b0a495787025e1d1b7ef017/artifacts
+end_time: 1683743148885
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: d8475b6b5b0a495787025e1d1b7ef017
+run_name: selective-conch-73
+run_uuid: d8475b6b5b0a495787025e1d1b7ef017
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1683743139782
+status: 3
+tags: []
+user_id: svobo

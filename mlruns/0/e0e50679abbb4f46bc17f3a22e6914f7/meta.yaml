@@ -1,0 +1,15 @@
+artifact_uri: file:///d:/OneDrive%20-%20FSV/IES%20bc/Data%20Proccesing%20in%20Python/Project/PythonDataIES_project/mlruns/0/e0e50679abbb4f46bc17f3a22e6914f7/artifacts
+end_time: 1683743265685
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: e0e50679abbb4f46bc17f3a22e6914f7
+run_name: righteous-boar-416
+run_uuid: e0e50679abbb4f46bc17f3a22e6914f7
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1683743259054
+status: 3
+tags: []
+user_id: svobo
