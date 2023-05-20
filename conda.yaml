@@ -1,0 +1,10 @@
+name: Loan_prediction
+channels: 
+  - conda-forge
+dependencies:
+  - python=3.10.9
+  - pip
+  - pip:
+      - scikit-learn
+      - mlflow
+      - pandas
