@@ -8,16 +8,47 @@ import numpy as np
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
 from urllib.parse import urlparse
 import mlflow
 from mlflow.models.signature import infer_signature
 import mlflow.sklearn
 
 import logging
+import argparse
 
 # Set logging
 logging.basicConfig(level=logging.WARN)
 logger = logging.getLogger(__name__)
+
+# Console command
+parser = argparse.ArgumentParser(description="Model training parameters")
+
+logit_parser = parser.add_argument_group("Logistic regression")
+logit_parser.add_argument('-logit--max_iter', type=int, default=100, help='Maximum number of iterations')
+logit_parser.add_argument('-logit--penalty', choices=['l1','l2','elasticnet',"None"], default='l2', help='Norm of the penalty')
+logit_parser.add_argument('-logit--solver', choices=['lbfgs','liblinear','newton-cholesky','sag','saga'], default='lbfgs', help='Algorithm for optimization')
+logit_parser.add_argument('-logit--C', type=float, default=1.0, help='Regularization strength')
+
+rf_parser = parser.add_argument_group("Random forest")
+rf_parser.add_argument('-rf--n_estimators', type=int, default=100, help='Number of decision trees in the forest')
+rf_parser.add_argument('-rf--max_leaf_nodes', type=int, default=None, help='Maximum number of leaf nodes')
+rf_parser.add_argument('-rf--criterion', choices=['gini','entropy','log_loss'], default='gini', help= 'Quality of a split measure')
+rf_parser.add_argument('-rf--max_depth', type=int, default=None, help='Maximum depth of the tree')
+
+args = parser.parse_args()
+
+logit_max_iter = args.logit__max_iter
+if args.logit__penalty == "None":
+    logit_penalty = None
+else: logit_penalty = args.logit__penalty 
+logit_solver = args.logit__solver
+logit_C = args.logit__C
+
+rf_n_estimators = args.rf__n_estimators
+rf_max_leaf_nodes = args.rf__max_leaf_nodes
+rf_criterion = args.rf__criterion
+rf_max_depth = args.rf__max_depth
 
 
 # Define evaluation matrics
@@ -27,7 +58,7 @@ def eval_metrics(actual, pred):
     r2 = r2_score(actual, pred)
     return rmse, mae, r2
 
-
+# Model training
 if __name__ == "__main__":
     warnings.filterwarnings("ignore")
     np.random.seed(8)
@@ -53,40 +84,78 @@ if __name__ == "__main__":
     y = data["Loan_Status_Y"]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=9)
 
-    # Model parameters
-    max_iter = int(sys.argv[1]) if len(sys.argv) > 1 else 100
-    
-    
-    # Run the Logistic regression
+    # Logistic regression
     with mlflow.start_run():
-        logistic_reg = LogisticRegression(solver="liblinear", max_iter=max_iter, random_state=10)
-        logistic_reg.fit(X_train, y_train)
-    
-        y_pred = logistic_reg.predict(X_test)
+        logit_params = {
+            'penalty': logit_penalty,
+            'C': logit_C,
+            'solver': logit_solver,
+            'max_iter': logit_max_iter,
+            'random_state': 10
+        }
+        
+        logit = LogisticRegression(**logit_params)
+        logit.fit(X_train, y_train)
+        y_pred_logit = logit.predict(X_test)
          
-        (rmse, mae, r2) = eval_metrics(y_test, y_pred)        
+        (rmse_logit, mae_logit, r2_logit) = eval_metrics(y_test, y_pred_logit)        
         
         # Print model metrics
-        print("Logistic model (max_iter = {:f}):".format(max_iter))
-        print("RMSE: %s" % rmse)
-        print("MAE: %s" % mae)
-        print("R2: %s" % r2)
+        if logit_penalty is None:
+            logit_penalty_str = "None"
+        else: logit_penalty_str = str(logit_penalty)
+        
+        print("Logistic regression (penalty={:s}, C={:f}, solver={:s}, "
+              "max_iter={:f}):".format(logit_penalty_str,logit_C,logit_solver,logit_max_iter))
+        print("RMSE: %s" % rmse_logit)
+        print("MAE: %s" % mae_logit)
+        print("R2: %s" % r2_logit)
+        print()
         
         # Log parameters
-        mlflow.log_param("max_iter", max_iter)
-        mlflow.log_metric("rmse", rmse)
-        mlflow.log_metric("mae", mae)
-        mlflow.log_metric("r2", r2)
+        mlflow.log_param("max_iter", logit_max_iter)
+        mlflow.log_metric("rmse", rmse_logit)
+        mlflow.log_metric("mae", mae_logit)
+        mlflow.log_metric("r2", r2_logit)
         
-        predictions = logistic_reg.predict(X_train)
-        signature = infer_signature(X_train, predictions)
+        fitted_logit = logit.predict(X_train)
+        signature_logit = infer_signature(X_train, fitted_logit)
         
-        # Register model
-        tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
+    # Random forest
+    with mlflow.start_run():
+        rf_params = {
+            'n_estimators': rf_n_estimators,
+            'max_leaf_nodes': rf_max_leaf_nodes,
+            'criterion': rf_criterion,
+            'max_depth': rf_max_depth,
+            'random_state': 1
+        }
         
-        if tracking_url_type_store != "file":
-            mlflow.sklearn.log_model(
-                logistic_reg, "Logit", registered_model_name="LogisticRegression", signature=signature
-            )
-        else:
-            mlflow.sklearn.log_model(logistic_reg, "Logit", signature=signature)
+        rf = RandomForestClassifier(**rf_params)
+        rf.fit(X_train, y_train)
+        y_pred_rf = rf.predict(X_test)
+        
+        (rmse_rf, mae_rf, r2_rf) = eval_metrics(y_test, y_pred_rf)
+        
+        # Print model metrics
+        if rf_max_leaf_nodes is None:
+            rf_max_leaf_nodes_str = "None"
+        else: rf_max_leaf_nodes_str = str(rf_max_leaf_nodes)
+        if rf_max_depth is None:
+            rf_max_depth_str = "None"
+        else: rf_max_depth_str = str(rf_max_depth)
+        
+        print("Random forest (n_arguments={:f}, max_leaf_nodes={:s}, criterion={:s}, "
+              "max_depth={:s}):".format(rf_n_estimators,rf_max_leaf_nodes_str,rf_criterion,rf_max_depth_str))
+        print("RMSE: %s" % rmse_rf)
+        print("MAE: %s" % mae_rf)
+        print("R2: %s" % r2_rf)
+        print()
+        
+        # Log parameters
+        mlflow.log_metric("rmse", rmse_rf)
+        mlflow.log_metric("mae", mae_rf)
+        mlflow.log_metric("r2", r2_rf)
+        
+        fitted_rf = rf.predict(X_train)
+        signature_rf = infer_signature(X_train, fitted_rf) 
