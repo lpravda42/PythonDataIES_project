@@ -38,7 +38,7 @@ More information can be found inside the help using
 python train.py -h
 ```
 
-An exampe of a command generating logistic regression with maximum iterations set to 200 and random forest with criterion set to 'entropy', keeping other parameters in default, looks like
+An exampel of a command generating logistic regression with maximum iterations set to 200 and random forest with criterion set to 'entropy', keeping other parameters in default, looks like
 ```bash
 python train.py -logit--max_iter 200 -rf--criterion entropy
 ```
@@ -51,6 +51,8 @@ mlflow ui
 ## Needs to be done
 
 The original data set is used at the moment so the data processing and analysis should be created, packaged and run in the main training file to load the data.
+
+Check the custom parameteres compatibility and ranges (some of them cannot be used with others, some are only positive,...) + add loggings to warn about wrong form of input parameters 
 
 Hyperparameters tuning
 

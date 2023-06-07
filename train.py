@@ -17,6 +17,10 @@ import mlflow.sklearn
 import logging
 import argparse
 
+# Creating experiment on remote server
+#mlflow.set_tracking_uri("http://127.0.0.1:5000")
+#mlflow.set_experiment("Loan_prediction")
+
 # Set logging
 logging.basicConfig(level=logging.WARN)
 logger = logging.getLogger(__name__)
@@ -85,7 +89,7 @@ if __name__ == "__main__":
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=9)
 
     # Logistic regression
-    with mlflow.start_run():
+    with mlflow.start_run(run_name="Logistic regression"):
         logit_params = {
             'penalty': logit_penalty,
             'C': logit_C,
@@ -113,16 +117,23 @@ if __name__ == "__main__":
         print()
         
         # Log parameters
-        mlflow.log_param("max_iter", logit_max_iter)
+        mlflow.set_tag("model_name","logit")
+        mlflow.log_params(logit_params)
         mlflow.log_metric("rmse", rmse_logit)
         mlflow.log_metric("mae", mae_logit)
         mlflow.log_metric("r2", r2_logit)
         
+        # Log model
         fitted_logit = logit.predict(X_train)
-        signature_logit = infer_signature(X_train, fitted_logit)
+        signature_logit = infer_signature(X_train, fitted_logit) 
+        
+        mlflow.sklearn.log_model(
+                logit, "logit", signature=signature_logit
+            )
+        
         
     # Random forest
-    with mlflow.start_run():
+    with mlflow.start_run(run_name="Random forest"):
         rf_params = {
             'n_estimators': rf_n_estimators,
             'max_leaf_nodes': rf_max_leaf_nodes,
@@ -153,9 +164,17 @@ if __name__ == "__main__":
         print()
         
         # Log parameters
+        mlflow.set_tag("model_name","rf")
+        mlflow.log_params(rf_params)
         mlflow.log_metric("rmse", rmse_rf)
         mlflow.log_metric("mae", mae_rf)
         mlflow.log_metric("r2", r2_rf)
         
+        
+        # Log model
         fitted_rf = rf.predict(X_train)
         signature_rf = infer_signature(X_train, fitted_rf) 
+        
+        mlflow.sklearn.log_model(
+                rf, "rf", signature=signature_rf
+            )
