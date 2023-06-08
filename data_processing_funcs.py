@@ -26,7 +26,7 @@ def drop_loan_id_column(df):
     Returns:
         pandas.DataFrame: The modified DataFrame without the 'Loan_ID' column.
     """
-    return df.drop(["Loan_ID"], axis=1)
+    return df.drop(["Loan_ID"], axis = 1)
 
 
 def fill_missing_values(df, str_columns, num_column):
@@ -40,9 +40,9 @@ def fill_missing_values(df, str_columns, num_column):
         None
     """
     for i in str_columns:
-        df[i].fillna(df[i].mode()[0], inplace=True)
+        df[i].fillna(df[i].mode()[0], inplace = True)
 
-    df[num_column].fillna(df[num_column].mean(), inplace=True)
+    df[num_column].fillna(df[num_column].mean(), inplace = True)
 
 
 def one_hot_encode(df):
@@ -55,7 +55,7 @@ def one_hot_encode(df):
         pandas.DataFrame: The encoded DataFrame.
     """
     df = pd.get_dummies(df)
-    df = df.drop(["Gender_Female", "Married_No"], axis=1)
+    df = df.drop(["Gender_Female", "Married_No", "Loan_Status_N"], axis = 1)
     return df
 
 
@@ -123,7 +123,7 @@ def scale_normalization(df):
         pandas.DataFrame: The scaled DataFrame.
     """
     scaler = MinMaxScaler()
-    return pd.DataFrame(scaler.fit_transform(df), columns=df.columns)
+    return pd.DataFrame(scaler.fit_transform(df), columns = df.columns)
 
 
 def oversample_minority_class(df):
@@ -135,10 +135,10 @@ def oversample_minority_class(df):
     Returns:
         pandas.DataFrame: The oversampled DataFrame.
     """
-    X = df.drop(["Loan_Status_Y"], axis=1)
+    X = df.drop(["Loan_Status_Y"], axis = 1)
     y = df["Loan_Status_Y"]
-    oversample = RandomOverSampler(sampling_strategy="minority")
+    oversample = RandomOverSampler(sampling_strategy = "minority")
     oversample.fit_resample(X, y)
-    df = pd.concat([X, y])
+    df = pd.concat([X, y], axis = 1)
 
     return df
