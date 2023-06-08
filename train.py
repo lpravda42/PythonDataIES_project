@@ -77,19 +77,20 @@ if __name__ == "__main__":
             "Unable to download the data set. Error %s", e
         )
     
-    # Data adjustments - will be deleted
+    # Data adjustments
+    data = data_processing_function(raw_data)
+
     #data = data.drop(['Loan_ID'], axis=1)
     #for i in ["Gender", "Married", "Dependents", "Self_Employed", "Loan_Amount_Term", "Credit_History"]:
      #   data[i].fillna(data[i].mode()[0], inplace = True)
     #data["LoanAmount"].fillna(data["LoanAmount"].mean(), inplace = True)
     #data = pd.get_dummies(data, drop_first=True)
-    data = data_processing_function(raw_data)
-
+    
 
 
     # Split data into training and testing samples
-    X = data.drop(["Loan_Status_N"], axis=1)
-    y = data["Loan_Status_N"]
+    X = data.drop(["Loan_Status_Y"], axis=1)
+    y = data["Loan_Status_Y"]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=9)
     
 

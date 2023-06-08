@@ -1,6 +1,6 @@
 import pandas as pd
 import pytest
-from data_processing_funcs import *
+from steps.data_processing_funcs import *
 
 def test_calculate_missing_percentage(capsys):
     df = pd.DataFrame({"A": [None, None, None, None],
