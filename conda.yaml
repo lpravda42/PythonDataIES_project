@@ -8,3 +8,4 @@ dependencies:
       - pandas
       - scikit_learn==1.2.0
       - mlflow>=1.0
+      - imblearn

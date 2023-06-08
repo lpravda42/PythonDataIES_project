@@ -1,4 +1,4 @@
-from data_processing_funcs import *
+from steps.data_processing_funcs import *
 
 def data_processing_function(df):
     """Performs a series of data processing steps on a DataFrame.
