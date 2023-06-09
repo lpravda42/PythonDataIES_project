@@ -45,9 +45,7 @@ rf_parser.add_argument('-rf--max_depth', type=int, default=None, help='Maximum d
 args = parser.parse_args()
 
 logit_max_iter = args.logit__max_iter
-if args.logit__penalty == "None":
-    logit_penalty = None
-else: logit_penalty = args.logit__penalty 
+logit_penalty = args.logit__penalty
 logit_solver = args.logit__solver
 logit_C = args.logit__C
 
@@ -97,7 +95,7 @@ if __name__ == "__main__":
     # Logistic regression
     with mlflow.start_run(run_name="Logistic regression"):
         logit_params = {
-            'penalty': logit_penalty,
+            'penalty': logit_penalty if logit_penalty != "None" else None,
             'C': logit_C,
             'solver': logit_solver,
             'max_iter': logit_max_iter,
