@@ -2,6 +2,7 @@
 import os
 import warnings
 import sys
+import json
 
 import pandas as pd
 import numpy as np
@@ -13,6 +14,7 @@ from urllib.parse import urlparse
 import mlflow
 from mlflow.models.signature import infer_signature
 import mlflow.sklearn
+from mlflow.tracking import MlflowClient
 
 import logging
 import argparse
@@ -21,7 +23,7 @@ from steps.data_processing import data_processing_function
 
 # Creating experiment on remote server
 #mlflow.set_tracking_uri("http://127.0.0.1:5000")
-#mlflow.set_experiment("Loan_prediction")
+mlflow.set_experiment("Loan_prediction")
 
 # Set logging
 logging.basicConfig(level=logging.WARN)
@@ -77,14 +79,6 @@ if __name__ == "__main__":
     
     # Data adjustments
     data = data_processing_function(raw_data)
-
-    #data = data.drop(['Loan_ID'], axis=1)
-    #for i in ["Gender", "Married", "Dependents", "Self_Employed", "Loan_Amount_Term", "Credit_History"]:
-     #   data[i].fillna(data[i].mode()[0], inplace = True)
-    #data["LoanAmount"].fillna(data["LoanAmount"].mean(), inplace = True)
-    #data = pd.get_dummies(data, drop_first=True)
-    
-
 
     # Split data into training and testing samples
     X = data.drop(["Loan_Status_Y"], axis=1)
@@ -182,3 +176,50 @@ if __name__ == "__main__":
         mlflow.sklearn.log_model(
                 rf, "rf", signature=signature_rf
             )
+
+
+    ## Select the best model ##
+    # Get experiment ID
+    current_experiment = dict(mlflow.get_experiment_by_name("Loan_prediction"))
+    experiment_id = current_experiment['experiment_id']
+    
+    # Work with MLflowClinet to access model elements 
+    client = MlflowClient()
+    
+    # Search for runs in a Loan_prediction experiment and order them by RMSE  
+    runs = client.search_runs(
+        [experiment_id],
+        order_by = ["metrics.rmse"]
+    )
+    
+    # Select the best run according to the RMSE metric
+    best_run = np.argmin([f.data.metrics['rmse'] for f in runs])
+    best_rmse = np.round(runs[best_run].data.metrics['rmse'],4)
+    
+    print(f"Experiment has {len(runs)} runs")
+    print(f"Best run - {best_run} with rmse of {best_rmse}")
+    
+    # "jsonify" log-model history
+    log_model_info = json.loads(runs[best_run].data.tags['mlflow.log-model.history'])[0]
+    
+    # Construct model URI
+    model_uri = 'runs:/' + log_model_info['run_id'] + '/' + log_model_info['artifact_path']
+    print(f"Best model URI - {model_uri}")
+    
+    # Register model
+    model_name = 'Loan_prediction'
+    model_version = 1
+    
+    mlflow.register_model(model_uri, model_name)
+    
+    # Promote to Production
+    logs = client.transition_model_version_stage(name=model_name,version=model_version,stage="Production")
+    
+    # Predictions
+    stage = "Production"
+    model_registry_path = f'models:/{model_name}/{stage}'
+    production_model = mlflow.pyfunc.load_model(model_registry_path)
+
+    prediction = production_model.predict(X_test[:1])
+    
+    print(f"Model prediction: {prediction}")
