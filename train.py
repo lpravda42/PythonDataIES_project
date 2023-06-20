@@ -33,29 +33,33 @@ logger = logging.getLogger(__name__)
 parser = argparse.ArgumentParser(description="Model training parameters")
 
 logit_parser = parser.add_argument_group("Logistic regression")
-logit_parser.add_argument('-logit--max_iter', type=int, default=100, help='Maximum number of iterations')
-logit_parser.add_argument('-logit--penalty', choices=['l1','l2','elasticnet',"None"], default='l2', help='Norm of the penalty')
-logit_parser.add_argument('-logit--solver', choices=['lbfgs','liblinear','newton-cholesky','sag','saga'], default='lbfgs', help='Algorithm for optimization')
-logit_parser.add_argument('-logit--C', type=float, default=1.0, help='Regularization strength')
+logit_parser.add_argument('--logit-max_iter', type=int, default=100, help='Maximum number of iterations')
+logit_parser.add_argument('--logit-penalty', choices=['l1','l2','elasticnet',"None"], default='l2', help='Norm of the penalty')
+logit_parser.add_argument('--logit-solver', choices=['lbfgs','liblinear','newton-cholesky','sag','saga'], default='lbfgs', help='Algorithm for optimization')
+logit_parser.add_argument('--logit-C', type=float, default=1.0, help='Regularization strength')
 
 rf_parser = parser.add_argument_group("Random forest")
-rf_parser.add_argument('-rf--n_estimators', type=int, default=100, help='Number of decision trees in the forest')
-rf_parser.add_argument('-rf--max_leaf_nodes', type=int, default=None, help='Maximum number of leaf nodes')
-rf_parser.add_argument('-rf--criterion', choices=['gini','entropy','log_loss'], default='gini', help= 'Quality of a split measure')
-rf_parser.add_argument('-rf--max_depth', type=int, default=None, help='Maximum depth of the tree')
+rf_parser.add_argument('--rf-n_estimators', type=int, default=100, help='Number of decision trees in the forest')
+rf_parser.add_argument('--rf-max_leaf_nodes', type=int, default=None, help='Maximum number of leaf nodes')
+rf_parser.add_argument('--rf-criterion', choices=['gini','entropy','log_loss'], default='gini', help='Quality of a split measure')
+rf_parser.add_argument('--rf-max_depth', type=int, default=None, help='Maximum depth of the tree')
+
+metric_parser = parser.add_argument_group("Evaluation metrics")
+metric_parser.add_argument('--metric', choices=['rmse','mae','r2'], default='rmse', help='Metric used for final model selection')
 
 args = parser.parse_args()
 
-logit_max_iter = args.logit__max_iter
-logit_penalty = args.logit__penalty
-logit_solver = args.logit__solver
-logit_C = args.logit__C
+logit_max_iter = args.logit_max_iter
+logit_penalty = args.logit_penalty
+logit_solver = args.logit_solver
+logit_C = args.logit_C
 
-rf_n_estimators = args.rf__n_estimators
-rf_max_leaf_nodes = args.rf__max_leaf_nodes
-rf_criterion = args.rf__criterion
-rf_max_depth = args.rf__max_depth
+rf_n_estimators = args.rf_n_estimators
+rf_max_leaf_nodes = args.rf_max_leaf_nodes
+rf_criterion = args.rf_criterion
+rf_max_depth = args.rf_max_depth
 
+metric = args.metric
 
 # Define evaluation matrics
 def eval_metrics(actual, pred):
@@ -186,25 +190,42 @@ if __name__ == "__main__":
     # Work with MLflowClinet to access model elements 
     client = MlflowClient()
     
-    # Search for runs in a Loan_prediction experiment and order them by RMSE  
-    runs = client.search_runs(
-        [experiment_id],
-        order_by = ["metrics.rmse"]
-    )
+    # Search for runs in a Loan_prediction experiment and select the best-performing run based on chosen metric
+    if metric == "rmse":
+        runs = client.search_runs(
+            [experiment_id],
+            order_by = ["metrics.rmse"]
+        )
+        best_run = np.argmin([f.data.metrics['rmse'] for f in runs])
+        best_rmse = np.round(runs[best_run].data.metrics['rmse'],4)
+        print(f"Experiment has {len(runs)} runs")
+        print(f"Best run - {best_run} with rmse of {best_rmse}")
+    elif metric == "mae":
+        runs = client.search_runs(
+            [experiment_id],
+            order_by = ["metrics.mae"]
+        )
+        best_run = np.argmin([f.data.metrics['mae'] for f in runs])
+        best_mae = np.round(runs[best_run].data.metrics['mae'],4)
+        print(f"Experiment has {len(runs)} runs")
+        print(f"Best run - {best_run} with mae of {best_mae}")
+    else:    
+        runs = client.search_runs(
+            [experiment_id],
+            order_by = ["metrics.r2 DESC"]
+        )
+        best_run = np.argmax([f.data.metrics['r2'] for f in runs])
+        best_r2 = np.round(runs[best_run].data.metrics['r2'],4)
+        print(f"Experiment has {len(runs)} runs")
+        print(f"Best run - {best_run} with r2 of {best_r2}")
     
-    # Select the best run according to the RMSE metric
-    best_run = np.argmin([f.data.metrics['rmse'] for f in runs])
-    best_rmse = np.round(runs[best_run].data.metrics['rmse'],4)
-    
-    print(f"Experiment has {len(runs)} runs")
-    print(f"Best run - {best_run} with rmse of {best_rmse}")
     
     # "jsonify" log-model history
     log_model_info = json.loads(runs[best_run].data.tags['mlflow.log-model.history'])[0]
     
     # Construct model URI
     model_uri = 'runs:/' + log_model_info['run_id'] + '/' + log_model_info['artifact_path']
-    print(f"Best model URI - {model_uri}")
+    print(f"Best model URI: {model_uri}")
     
     # Register model
     model_name = 'Loan_prediction'

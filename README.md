@@ -48,7 +48,9 @@ Model metrics for given parameters are displayed in the terminal after a command
 mlflow ui 
 ```
 
-After the logit and rf runs are completed, the best-performing model based on the rmse metric out of these two and all preceding ones inside the "Loan_prediction" experiment is selected. This model is then registered and set to production stage. Finally, the basic prediction is performed inside a terminal. 
+After the logit and rf runs are completed, the best-performing model based on the selected metric (rmse,mae,r2) out of these two runs and all preceding ones inside the "Loan_prediction" experiment is selected. This model is then registered and set to production stage. Finally, the basic prediction is performed. 
+
+In addition to the model metrics and parameters, a user can find information about the experiment size, best model URI, registration process and prediction in the terminal.
 
 
 ## Needs to be done
