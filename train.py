@@ -6,6 +6,7 @@ import json
 
 import pandas as pd
 import numpy as np
+import requests
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
@@ -83,7 +84,9 @@ if __name__ == "__main__":
     
     # Data adjustments
     data = data_processing_function(raw_data)
-
+    print(data.iloc[:5,13:])
+    
+    
     # Split data into training and testing samples
     X = data.drop(["Loan_Status_Y"], axis=1)
     y = data["Loan_Status_Y"]
@@ -244,3 +247,20 @@ if __name__ == "__main__":
     prediction = production_model.predict(X_test[:1])
     
     print(f"Model prediction: {prediction}")
+    
+    
+    
+    
+    ## Server call
+    # After running a server command: mlflow models serve --model-uri models:/Loan_prediction/Production -p 5001
+#    example = X_test
+#    to_send = example.to_dict(orient='split')
+#    to_send.pop("index", None) # adjust data to be json convertible
+    
+#    url = 'http://127.0.0.1:5001/invocations' # server url
+    
+#    response = requests.post(url=url, data=json.dumps({"dataframe_split":to_send}),headers={"Content-type": "application/json"}) # send 'data' request to the 'url'
+    
+#    response_json = json.loads(response.text) # convert request back to python dictionary
+#    print("Response from the server:")
+#    print(response_json)

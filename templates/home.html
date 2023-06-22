@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+  <meta charset="UTF-8">
+  <title>ML API</title>
+  <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Arimo' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Hind:300' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300' rel='stylesheet' type='text/css'>
+
+  
+</head>
+
+<body>
+ <div class="login">
+	<h1>Loan prediction</h1>
+
+     <!-- Main Input For Receiving Query to our ML -->
+    <form action="{{ url_for('predict')}}"method="post">
+        <input type="text" name="ApplicantIncome" placeholder="ApplicantIncome" required="required" /><br>
+        <input type="text" name="CoapplicantIncome" placeholder="CoapplicantIncome" required="required" /><br>
+        <input type="text" name="LoanAmount" placeholder="LoanAmount" required="required" /><br>
+        <input type="text" name="Loan_Amount_Term" placeholder="Loan_Amount_Term" required="required" /><br>
+        <input type="text" name="Credit_History" placeholder="Credit_History" required="required" /><br>
+        <input type="text" name="Gender_Male" placeholder="Gender_Male" required="required" /><br>
+        <input type="text" name="Married_Yes" placeholder="Married_Yes" required="required" /><br>
+        <input type="text" name="Dependents_0" placeholder="Dependents_0" required="required" /><br>
+        <input type="text" name="Dependents_1" placeholder="Dependents_1" required="required" /><br>
+        <input type="text" name="Dependents_2" placeholder="Dependents_2" required="required" /><br>
+        <input type="text" name="Dependents_3+" placeholder="Dependents_3+" required="required" /><br>
+        <input type="text" name="Education_Graduate" placeholder="Education_Graduate" required="required" /><br>
+        <input type="text" name="Education_Not Graduate" placeholder="Education_Not Graduate" required="required" /><br>
+        <input type="text" name="Self_Employed_No" placeholder="Self_Employed_No" required="required" /><br>
+        <input type="text" name="Self_Employed_Yes" placeholder="Self_Employed_Yes" required="required" /><br>
+        <input type="text" name="Property_Area_Rural" placeholder="Property_Area_Rural" required="required" /><br>
+        <input type="text" name="Property_Area_Semiurban" placeholder="Property_Area_Semiurban" required="required" /><br>
+        <input type="text" name="Property_Area_Urban" placeholder="Property_Area_Urban" required="required" /><br>
+        
+
+        
+        <button type="submit" class="btn btn-primary btn-block btn-large">Predict</button>
+    </form>
+
+   <br>
+   <br>
+  
+   
+ </div>
+ {{prediction_text}}
+
+</body>
+</html>
