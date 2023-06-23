@@ -11,3 +11,4 @@ dependencies:
       - imblearn
       - hyperopt
       - Flask
+      - scipy

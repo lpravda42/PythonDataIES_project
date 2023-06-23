@@ -81,11 +81,9 @@ if __name__ == "__main__":
         logger.exception(
             "Unable to download the data set. Error %s", e
         )
-    
+
     # Data adjustments
     data = data_processing_function(raw_data)
-    print(data.iloc[:5,13:])
-    
     
     # Split data into training and testing samples
     X = data.drop(["Loan_Status_Y"], axis=1)
