@@ -1,4 +1,6 @@
 import pandas as pd
+import joblib
+import os
 
 from steps.data_processing_funcs import scale_normalization 
 
@@ -21,6 +23,7 @@ def process_data_app(raw_data):
     data = pd.DataFrame(columns=desired_columns)
     
         # Map values from the original DataFrame to the new DataFrame
+    data['Loan_Status_Y'] = [0]
     data['ApplicantIncome'] = [float(raw_data_df['ApplicantIncome'].iloc[0])]
     data['CoapplicantIncome'] = [float(raw_data_df['CoapplicantIncome'].iloc[0])]
     data['LoanAmount'] = [float(raw_data_df['LoanAmount'].iloc[0])]
@@ -39,16 +42,9 @@ def process_data_app(raw_data):
     data['Property_Area_Rural'] = [1.0 if raw_data_df['Property_Area'].iloc[0] == 'Rural' else 0.0]
     data['Property_Area_Semiurban'] = [1.0 if raw_data_df['Property_Area'].iloc[0] == 'Semiurban' else 0.0]
     data['Property_Area_Urban'] = [1.0 if raw_data_df['Property_Area'].iloc[0] == 'Urban' else 0.0]
-    print(data)
     
     # Scale data
-    data = scale_normalization(data)
-
-    return data
-
-
-
-
-
-
-# Function processing the data for the final app
+    scaler = joblib.load('./steps/scaler.pkl')
+    scaled_data = pd.DataFrame(scaler.transform(data), columns=data.columns).drop('Loan_Status_Y',axis=1)
+    
+    return scaled_data

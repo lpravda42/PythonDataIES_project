@@ -3,6 +3,8 @@ import numpy as np
 from scipy import stats
 from sklearn.preprocessing import MinMaxScaler
 from imblearn.over_sampling import RandomOverSampler
+import os
+import joblib
 
 def calculate_missing_percentage(df):
     """Calculates the percentage of missing values in each column of a DataFrame.
@@ -123,7 +125,9 @@ def scale_normalization(df):
         pandas.DataFrame: The scaled DataFrame.
     """
     scaler = MinMaxScaler()
-    return pd.DataFrame(scaler.fit_transform(df), columns = df.columns)
+    scaled_df = pd.DataFrame(scaler.fit_transform(df), columns = df.columns)
+    joblib.dump(scaler,'./steps/scaler.pkl')
+    return scaled_df
 
 
 def oversample_minority_class(df):

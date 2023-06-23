@@ -35,7 +35,7 @@ def predict():
     for key, value in request.form.items():
         raw_data[key] = value
     data = process_data_app(raw_data)
-    print(data)
+    #print(data)
     output = production_model.predict(data)[0]
     return render_template("home.html",prediction_text="The predicted result is {}".format(output))
 
