@@ -15,7 +15,9 @@ The project aims to build a machine learning model that predicts the probability
 
 ## Project description
 
-The main python script is 'train.py'. The project environment is specified in 'MLproject' and 'conda.yaml'. A user can install the conda environment by running 
+### Environment
+
+The project environment is specified in 'MLproject' and 'conda.yaml'. A user can install the conda environment with all project dependencies by running 
 ```bash
 conda env create -f conda.yaml
 ```
@@ -24,7 +26,9 @@ and activate it with
 conda activate Loan_prediction
 ```
 
-The script 'train.py' can be run inside the terminal using command 
+### Model training
+
+The main python script for model training is 'train.py'. It can be run inside the terminal using command 
 ```bash
 python train.py
 ```
@@ -48,9 +52,22 @@ Model metrics for given parameters are displayed in the terminal after a command
 mlflow ui 
 ```
 
-After the logit and rf runs are completed, the best-performing model based on the selected metric (rmse,mae,r2) out of these two runs and all preceding ones inside the "Loan_prediction" experiment is selected. This model is then registered and set to production stage. Finally, the basic prediction is performed. 
+After the logit and rf runs are completed, the best-performing model based on the selected metric (rmse,mae,r2) out of these two runs and all preceding ones inside the "Loan_prediction" experiment is selected. This model is then registered and set to production stage. Finally, the basic prediction is performed. The evaluation metric can be set using an argument "--metric", for example, choosing R2 would look like that
+```bash
+python train.py --metric r2
+```
 
 In addition to the model metrics and parameters, a user can find information about the experiment size, best model URI, registration process and prediction in the terminal.
+
+
+### Server and web application
+
+Once the best-performing model is registered, a user can proceed to creating a local server and web application. This is accomplished inside the 'app.py' script by running this command, no further arguments need to be specified
+```bash
+python app.py
+```
+Once a server is created, its http adress leading to the web form can be found in the console. After filling all of the arrays and clicking the button 'Predict', the prediction is generated reaching values {1,0} assigning receiving and not receiving a loan, respectively. 
+
 
 
 ## Needs to be done
@@ -58,7 +75,3 @@ In addition to the model metrics and parameters, a user can find information abo
 Adding more comments and functions description + check the custom parameteres compatibility and ranges (some of them cannot be used with others, some are only positive,...) + add loggings to warn about wrong form of input parameters 
 
 Hyperparameters tuning
-
-Serve the best-performing model
-
-The project ends with model deployment, the idea is a web form predicting the probability after filling the independent variables.

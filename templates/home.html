@@ -4,27 +4,50 @@
 <head> <!-- metadata -->
   <meta charset="UTF-8">
   <title>ML API</title>
-  
 </head>
 
 <body>
  <div class="login">
 	<h1>Loan prediction</h1>
 
-     <!-- Main Input For Receiving Query to our ML -->
+     <!-- Main input for receiving data to ML model -->
     <form action="{{ url_for('predict')}}"method="post"> <!-- creates a form -->
-        <input type="text" name="Gender" placeholder="Gender" required="required" /><br>
-        <input type="text" name="Married" placeholder="Married" required="required" /><br>
-        <input type="text" name="Dependents" placeholder="Dependents" required="required" /><br>
-        <input type="text" name="Education" placeholder="Education" required="required" /><br>
-        <input type="text" name="Self_Employed" placeholder="Self_Employed" required="required" /><br>
-        <input type="text" name="ApplicantIncome" placeholder="ApplicantIncome" required="required" /><br>
-        <input type="text" name="CoapplicantIncome" placeholder="CoapplicantIncome" required="required" /><br>
-        <input type="text" name="LoanAmount" placeholder="LoanAmount" required="required" /><br>
-        <input type="text" name="Loan_Amount_Term" placeholder="Loan_Amount_Term" required="required" /><br>
-        <input type="text" name="Credit_History" placeholder="Credit_History" required="required" /><br>
-        <input type="text" name="Property_Area" placeholder="Property_Area" required="required" /><br>
-        <!-- fields in the form -->
+      <select name="Gender" required="required" /> 
+        <option value="">Gender</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+      </select><br>
+      <select name="Married" required="required" /> 
+        <option value="">Married</option>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+      </select><br>
+      <input type="number" name="Dependents" placeholder="Dependents" required="required" min="0" max="20"/><br>
+      <select name="Education" required="required" /> 
+        <option value="">Education</option>
+        <option value="Graduate">Graduate</option>
+        <option value="Not Graduate">Not Graduate</option>
+      </select><br>
+      <select name="Self_Employed" required="required" /> 
+        <option value="">Self Employed</option>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+      </select><br>
+      <input type="number" name="ApplicantIncome" placeholder="ApplicantIncome" required="required" step="any" min="0" /><br>
+      <input type="number" name="CoapplicantIncome" placeholder="CoapplicantIncome" required="required" step="any" min="0" /><br>
+      <input type="number" name="LoanAmount" placeholder="LoanAmount" required="required" step="any" min="0" /><br>
+      <input type="number" name="Loan_Amount_Term" placeholder="Loan_Amount_Term" required="required" min="0" /><br>
+      <select name="Credit_History" required="required" /> 
+        <option value="">Credit History</option>
+        <option value="1">1</option>
+        <option value="0">0</option>
+      </select><br>
+      <select name="Property_Area" required="required" /> 
+        <option value="">Property Area</option>
+        <option value="Urban">Urban</option>
+        <option value="Rural">Rural</option>
+        <option value="Semiurban">Semiurban</option>
+      </select><br>   <!-- fields in the form -->
 
         
         <button type="submit" class="btn btn-primary btn-block btn-large">Predict</button> <!-- predict button -->
