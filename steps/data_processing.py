@@ -13,14 +13,15 @@ def data_processing_function(df):
     Returns:
         pandas.DataFrame: The processed DataFrame.
     """
-    #calculate_missing_percentage(df)
-    df = drop_loan_id_column(df)
-    fill_missing_values(df, ["Gender", "Married", "Dependents", "Self_Employed", "Loan_Amount_Term", "Credit_History"], "LoanAmount")
-    df = one_hot_encode(df)
-    df = remove_outliers_z_score(df, ["ApplicantIncome", "CoapplicantIncome", "LoanAmount"])
-    df = remove_outliers_iqr(df, ["ApplicantIncome", "CoapplicantIncome", "LoanAmount"])
-    df = remove_skewness(df, ["ApplicantIncome", "CoapplicantIncome"])
-    df = scale_normalization(df)
-    df = oversample_minority_class(df)
+    df = (
+    df.pipe(drop_loan_id_column)
+      .pipe(fill_missing_values, ["Gender", "Married", "Dependents", "Self_Employed", "Loan_Amount_Term", "Credit_History"], "LoanAmount")
+      .pipe(one_hot_encode)
+      .pipe(remove_outliers_z_score, ["ApplicantIncome", "CoapplicantIncome", "LoanAmount"])
+      .pipe(remove_outliers_iqr, ["ApplicantIncome", "CoapplicantIncome", "LoanAmount"])
+      .pipe(remove_skewness, ["ApplicantIncome", "CoapplicantIncome"])
+      .pipe(scale_normalization)
+      .pipe(oversample_minority_class)
+)
 
     return df
