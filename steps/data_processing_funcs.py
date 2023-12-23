@@ -45,6 +45,7 @@ def fill_missing_values(df, str_columns, num_column):
         df[i].fillna(df[i].mode()[0], inplace = True)
 
     df[num_column].fillna(df[num_column].mean(), inplace = True)
+    return df
 
 
 def one_hot_encode(df):
